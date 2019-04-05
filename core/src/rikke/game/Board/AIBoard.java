@@ -1,5 +1,7 @@
 package rikke.game.Board;
 
+import rikke.game.Util.Tuple2Int;
+
 public class AIBoard extends Board{
 
     boolean[][] playerHasBombed;
@@ -9,13 +11,13 @@ public class AIBoard extends Board{
         playerHasBombed = new boolean[10][10];
     }
 
-    public void registerHit(int x, int y) {
-        if (getField(x, y) == Field.BOAT) {
-            setField(x, y, Field.HIT);
+    public void registerHit(Tuple2Int coords) {
+        if (getField(coords) == Field.BOAT) {
+            setField(coords, Field.HIT);
         } else {
-            setField(x, y, Field.MISS);
+            setField(coords, Field.MISS);
         }
-        playerHasBombed[y][x] = true;
+        playerHasBombed[coords.y][coords.x] = true;
     }
 
     @Override

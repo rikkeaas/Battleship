@@ -1,5 +1,7 @@
 package rikke.game.Board;
 
+import rikke.game.Util.Tuple2Int;
+
 public abstract class Board {
 
     private final int STANDARD_BOARD_SIZE = 10;
@@ -20,10 +22,16 @@ public abstract class Board {
 
 
 
+    public Field getField(Tuple2Int coords) {
+        return board[coords.y][coords.x];
+    }
     public Field getField(int x, int y) {
         return board[y][x];
     }
 
+    public void setField(Tuple2Int coords, Field field) {
+        board[coords.y][coords.x] = field;
+    }
     public void setField(int x, int y, Field field) {
         board[y][x] = field;
     }

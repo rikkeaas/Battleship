@@ -1,5 +1,7 @@
 package rikke.game.Board;
 
+import rikke.game.Util.Tuple2Int;
+
 public class PlayerBoard extends Board {
 
     public PlayerBoard() {
@@ -7,11 +9,11 @@ public class PlayerBoard extends Board {
     }
 
 
-    public void registerHit(int x, int y) {
-        if (getField(x, y) == Field.BOAT) {
-            setField(x, y, Field.HIT);
+    public void registerHit(Tuple2Int coords) {
+        if (getField(coords) == Field.BOAT) {
+            setField(coords, Field.HIT);
         } else {
-            setField(x, y, Field.MISS);
+            setField(coords, Field.MISS);
         }
     }
 
