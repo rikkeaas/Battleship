@@ -27,7 +27,7 @@ public class Player implements IPlayer {
             String dir = in.next();
 
             boatCount++;
-            
+
         } while (boatCount < 5);
 
     }
