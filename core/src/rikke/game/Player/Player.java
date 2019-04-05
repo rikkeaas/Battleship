@@ -12,6 +12,7 @@ public class Player extends AbstractPlayer {
     public Player(int nbOfBoats, int[] boatSizes) {
         super(nbOfBoats, boatSizes);
         board = new PlayerBoard();
+        generateBoats(boatSizes);
     }
 
     @Override

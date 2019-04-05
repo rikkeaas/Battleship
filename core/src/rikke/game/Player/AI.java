@@ -12,6 +12,7 @@ public class AI extends AbstractPlayer {
     public AI(int nbOfBoats, int[] boatSizes) {
         super(nbOfBoats, boatSizes);
         board = new AIBoard();
+        generateBoats(boatSizes);
     }
 
     @Override

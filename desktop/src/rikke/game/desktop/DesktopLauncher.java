@@ -6,6 +6,8 @@ import rikke.game.Battleship;
 import rikke.game.Board.AIBoard;
 import rikke.game.Board.Board;
 import rikke.game.Board.PlayerBoard;
+import rikke.game.Player.AI;
+import rikke.game.Player.Player;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
@@ -13,15 +15,13 @@ public class DesktopLauncher {
 		config.title = "Battleship";
 		new LwjglApplication(new Battleship(), config);
 
-		Board pBoard = new PlayerBoard();
-		Board aBoard = new AIBoard();
-		System.out.println(aBoard.toString());
-		System.out.println(pBoard.toString());
+		int nbOfBoats = 5;
+		int[] sizes = new int[]{5,4,3,3,2};
 
-		((PlayerBoard) pBoard).registerHit(5,5);
-		((AIBoard) aBoard).registerHit(5,5);
+		Player player = new Player(nbOfBoats, sizes);
+		AI ai = new AI(nbOfBoats, sizes);
 
-		System.out.println(aBoard.toString());
-		System.out.println(pBoard.toString());
+		System.out.println(player.visualizeBoard());
+		System.out.println(ai.visualizeBoard());
 	}
 }

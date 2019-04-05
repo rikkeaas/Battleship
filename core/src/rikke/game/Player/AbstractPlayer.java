@@ -18,13 +18,13 @@ public abstract class AbstractPlayer implements IPlayer {
     public AbstractPlayer(int nbOfBoats, int[] boatSizes) {
         boats = new Boat[nbOfBoats];
         this.boatSizes = boatSizes;
-        generateBoats(boatSizes);
     }
 
     protected boolean registerValidBoat(Tuple2Int startCoord, Direction dir, int idx) {
         Boat boat = new Boat(boatSizes[idx], startCoord, dir);
         if (isValid(boat)) {
             boats[idx] = boat;
+            board.registerBoat(boat.getFields());
             return true;
         }
         return false;
@@ -33,8 +33,10 @@ public abstract class AbstractPlayer implements IPlayer {
 
     protected boolean isValid(Boat boat) {
         Tuple2Int[] coords = boat.getFields();
-        if (coords[0].x >= 0 && coords[0].x < board.getSize() && coords[0].y >= 0 && coords[0].y < board.getSize()) {
+        int l = boat.size - 1;
+        if (coords[l].x >= 0 && coords[l].x < board.getSize() && coords[l].y >= 0 && coords[l].y < board.getSize()) {
             for (Tuple2Int coord : coords) {
+                System.out.println(coord);
                 if (board.getField(coord) == Field.BOAT) { // Not valid if there is already a boat here
                     return false;
                 }

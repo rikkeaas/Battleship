@@ -11,9 +11,10 @@ public class AIBoard extends Board{
         playerHasBombed = new boolean[10][10];
     }
 
-    public void registerHit(Tuple2Int coords) {
-        super.registerHit(coords);
+    public boolean registerHit(Tuple2Int coords) {
+        boolean result = super.registerHit(coords);
         playerHasBombed[coords.y][coords.x] = true;
+        return result;
     }
 
     @Override
