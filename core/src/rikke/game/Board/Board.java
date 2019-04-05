@@ -2,16 +2,32 @@ package rikke.game.Board;
 
 public abstract class Board {
 
-    public Field getField(int x, int y) {
+    private final int STANDARD_BOARD_SIZE = 10;
+    private Field[][] board;
 
-
-        return null;
+    public Board() {
+        board = new Field[STANDARD_BOARD_SIZE][STANDARD_BOARD_SIZE];
+        initialize();
     }
 
-    public Field setField(int x, int y) {
+    private void initialize() {
+        for (int y = 0; y < getSize(); y++) {
+            for (int x = 0; x < getSize(); x++) {
+                setField(x, y, Field.WATER);
+            }
+        }
+    }
 
+    public Field getField(int x, int y) {
+        return board[y][x];
+    }
 
-        return null;
+    public void setField(int x, int y, Field field) {
+        board[y][x] = field;
+    }
+
+    public int getSize() {
+        return STANDARD_BOARD_SIZE;
     }
 
 }
