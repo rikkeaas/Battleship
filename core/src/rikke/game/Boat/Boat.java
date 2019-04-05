@@ -1,16 +1,17 @@
 package rikke.game.Boat;
 
 import rikke.game.Board.Field;
+import rikke.game.Util.Tuple2Int;
 
 public class Boat {
 
-    int[][] boatFields; // List of coordinate pairs
+    Tuple2Int[] boatFields; // List of coordinate pairs
 
-    public Boat(int size, int[] startCoords, int[] endCoords) {
-        boatFields = new int[size][2];
+    public Boat(int size, Tuple2Int startCoords, ) {
+        boatFields = new Tuple2Int[size];
         for (int i = 0; i < size; i++) {
+            boatFields[i] = new Tuple2Int()
 
-            boatFields[i][0] =
 
         }
     }
