@@ -18,6 +18,8 @@ public abstract class Board {
         }
     }
 
+
+
     public Field getField(int x, int y) {
         return board[y][x];
     }

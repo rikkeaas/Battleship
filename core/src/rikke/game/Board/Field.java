@@ -1,8 +1,10 @@
 package rikke.game.Board;
 
 public enum Field {
-    BOAT("#"),
-    WATER("-");
+    BOAT("B"),
+    WATER("-"),
+    HIT("X"),
+    MISS("O");
 
     private String representation;
 
