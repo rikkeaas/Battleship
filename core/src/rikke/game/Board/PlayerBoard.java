@@ -8,16 +8,6 @@ public class PlayerBoard extends Board {
         super();
     }
 
-
-    public void registerHit(Tuple2Int coords) {
-        if (getField(coords) == Field.BOAT) {
-            setField(coords, Field.HIT);
-        } else {
-            setField(coords, Field.MISS);
-        }
-    }
-
-
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

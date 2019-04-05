@@ -12,11 +12,7 @@ public class AIBoard extends Board{
     }
 
     public void registerHit(Tuple2Int coords) {
-        if (getField(coords) == Field.BOAT) {
-            setField(coords, Field.HIT);
-        } else {
-            setField(coords, Field.MISS);
-        }
+        super.registerHit(coords);
         playerHasBombed[coords.y][coords.x] = true;
     }
 

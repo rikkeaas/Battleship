@@ -1,49 +1,34 @@
 package rikke.game.Player;
 
-import rikke.game.Board.Board;
 import rikke.game.Board.PlayerBoard;
+import rikke.game.Util.Direction;
+import rikke.game.Util.Tuple2Int;
 
 import java.util.Scanner;
 
-public class Player implements IPlayer {
-
-    private PlayerBoard board;
+public class Player extends AbstractPlayer {
 
 
-    public Player() {
+    public Player(int nbOfBoats, int[] boatSizes) {
+        super(nbOfBoats, boatSizes);
         board = new PlayerBoard();
-        generateBoats();
     }
 
-
     @Override
-    public void generateBoats() {
+    public void generateBoats(int[] boatSizes) {
         Scanner in = new Scanner(System.in);
         int boatCount = 0;
         do {
             System.out.println("Write in start coordinates and direction in format <x> <y> <N/S/E/W>");
             int x = Integer.parseInt(in.next());
             int y = Integer.parseInt(in.next());
-            String dir = in.next();
+            Direction dir = Direction.fromName(in.next());
 
-            boatCount++;
+            if (registerValidBoat(new Tuple2Int(x,y), dir, boatCount)) {
+                boatCount++;
+            }
 
-        } while (boatCount < 5);
+        } while (boatCount < boatSizes.length);
 
-    }
-
-    @Override
-    public String visualizeBoard() {
-        return null;
-    }
-
-    @Override
-    public Board getBoard() {
-        return null;
-    }
-
-    @Override
-    public boolean handleShot(int x, int y) {
-        return false;
     }
 }

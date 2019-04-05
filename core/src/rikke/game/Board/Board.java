@@ -21,7 +21,6 @@ public abstract class Board {
     }
 
 
-
     public Field getField(Tuple2Int coords) {
         return board[coords.y][coords.x];
     }
@@ -38,6 +37,22 @@ public abstract class Board {
 
     public int getSize() {
         return STANDARD_BOARD_SIZE;
+    }
+
+    public void registerBoat(Tuple2Int[] coords) {
+        for (Tuple2Int coord : coords) {
+            setField(coord, Field.BOAT);
+        }
+    }
+
+    public boolean registerHit(Tuple2Int coords) {
+        if (getField(coords) == Field.BOAT) {
+            setField(coords, Field.HIT);
+            return true;
+        } else {
+            setField(coords, Field.MISS);
+            return false;
+        }
     }
 
 }

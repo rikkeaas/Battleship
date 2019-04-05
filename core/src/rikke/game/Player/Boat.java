@@ -9,9 +9,15 @@ import java.util.Iterator;
 public class Boat {
 
     private Tuple2Int[] boatFields; // List of coordinate pairs
+    int size;
 
-    public Boat(int size, Tuple2Int startCoords, Direction dir) {
+    public Boat(int size, Tuple2Int start, Direction dir) {
+        this.size = size;
         boatFields = new Tuple2Int[size];
+        generate(start, dir);
+    }
+
+    private void generate(Tuple2Int startCoords, Direction dir) {
         int dx = dir.getDx();
         int dy = dir.getDy();
         for (int i = 0; i < size; i++) {
@@ -19,8 +25,13 @@ public class Boat {
         }
     }
 
+
     public Tuple2Int[] getFields() {
         return boatFields;
     }
 
+
+    public int getSize() {
+        return size;
+    }
 }
