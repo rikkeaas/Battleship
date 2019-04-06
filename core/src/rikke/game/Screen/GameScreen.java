@@ -17,6 +17,8 @@ import rikke.game.Player.AbstractPlayer;
 import rikke.game.Player.Boat;
 import rikke.game.Util.Tuple2Int;
 
+import java.util.Random;
+
 public class GameScreen implements Screen {
 
     Battleship game;
@@ -44,8 +46,8 @@ public class GameScreen implements Screen {
         map = loader.load("battleship_map.tmx");
         float unitScale = 1 / 32f; // Since I have 32x32 tiles
         tiledMapRenderer = new OrthogonalTiledMapRenderer(map, unitScale);
-        addBoats(game.mainGame.ai, 12);
-        addBoats(game.mainGame.player, 0);
+        addBoats(game.mainGame.ai, 13);
+        addBoats(game.mainGame.player, 1);
         TiledMapTileLayer fogLayer = (TiledMapTileLayer) map.getLayers().get("fog");
         fogLayer.setOpacity((float) 0.6);
     }
@@ -68,7 +70,7 @@ public class GameScreen implements Screen {
                     cell.setTile(map.getTileSets().getTile(4));
                 }
                 cell.setRotation(rotation);
-                boatLayer.setCell(boat.getFields()[i].x + 1 + offSet, boat.getFields()[i].y, cell);
+                boatLayer.setCell(boat.getFields()[i].x + offSet, boat.getFields()[i].y, cell);
             }
 
         }
@@ -94,6 +96,31 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        int w = Gdx.graphics.getWidth();
+        int h = Gdx.graphics.getHeight();
+
+        if (Gdx.input.justTouched()) {
+            int xScaling = w / 23;
+            int yScaling = h / 11;
+
+            int x = -13 + Gdx.input.getX() / xScaling;
+            int y = (h - Gdx.input.getY()) / yScaling;
+
+
+            if (x >= 0 && y < 10) {
+                System.out.println(x + ", " + y);
+                game.mainGame.ai.handleShot(new Tuple2Int(x, y));
+
+                Random r = new Random();
+                int rx = r.nextInt(10);
+                int ry = r.nextInt(10);
+                game.mainGame.player.handleShot(new Tuple2Int(rx, ry));
+
+                updateBoard(rx, ry, game.mainGame.player.getBoard(), 1);
+                updateBoard(x, y, game.mainGame.ai.getBoard(), 13);
+            }
+        }
+
         camera.update();
         tiledMapRenderer.setView(camera);
 
@@ -101,6 +128,28 @@ public class GameScreen implements Screen {
 
 
     }
+
+
+    private void updateBoard(int x, int y, Board board, int xOffset) {
+        TiledMapTileLayer hitMissLayer = (TiledMapTileLayer) map.getLayers().get("hit_or_miss");
+        TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
+
+        switch (board.getField(x, y)) {
+            case HIT:
+                cell.setTile(map.getTileSets().getTile(7));
+                break;
+            case MISS:
+                cell.setTile(map.getTileSets().getTile(8));
+                break;
+        }
+        hitMissLayer.setCell(x + xOffset, y, cell);
+
+        TiledMapTileLayer fogLayer = (TiledMapTileLayer) map.getLayers().get("fog");
+        TiledMapTileLayer.Cell fogcell = new TiledMapTileLayer.Cell();
+        fogcell.setTile(map.getTileSets().getTile(0));
+        fogLayer.setCell(x + xOffset, y, fogcell);
+    }
+
 
     @Override
     public void resize(int i, int i1) {

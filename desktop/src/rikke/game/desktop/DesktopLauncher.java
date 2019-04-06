@@ -15,6 +15,7 @@ public class DesktopLauncher {
 		config.title = "Battleship";
 		config.width = 1000;
 		//config.fullscreen = true;
+		config.foregroundFPS = 30;
 		new LwjglApplication(new Battleship(), config);
 	}
 }

@@ -2,6 +2,8 @@ package rikke.game.Board;
 
 import rikke.game.Util.Tuple2Int;
 
+import java.util.Random;
+
 public abstract class Board {
 
     private final int STANDARD_BOARD_SIZE = 10;
@@ -47,10 +49,15 @@ public abstract class Board {
 
     public boolean registerHit(Tuple2Int coords) {
         if (getField(coords) == Field.BOAT) {
+            System.out.println("Bord has boat");
             setField(coords, Field.HIT);
             return true;
-        } else {
+        } else if (getField(coords) == Field.WATER){
             setField(coords, Field.MISS);
+            return false;
+        }
+        else {
+            System.out.println("Already shot here");
             return false;
         }
     }

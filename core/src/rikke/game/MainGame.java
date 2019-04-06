@@ -1,7 +1,6 @@
 package rikke.game;
 
 import rikke.game.Board.Board;
-import rikke.game.Board.PlayerBoard;
 import rikke.game.Player.AI;
 import rikke.game.Player.AbstractPlayer;
 import rikke.game.Player.Player;

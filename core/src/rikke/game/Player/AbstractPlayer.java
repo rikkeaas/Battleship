@@ -88,15 +88,18 @@ public abstract class AbstractPlayer implements IPlayer {
     }
 
     private void sunkenBoat() {
-        for (Boat boat : boats) {
-            for (Tuple2Int coord : boat.getFields()) {
-                if (board.getField(coord) == Field.BOAT) {
-                    System.out.println("You have sunken boat of size " + boat.size);
-                    return;
-                }
-            }
-        }
-        System.out.println("Hit, but no boats have sunk (yet)");
+        // todo fix!
+//        for (Boat boat : boats) {
+//            for (Tuple2Int coord : boat.getFields()) {
+//                if (board.getField(coord) == Field.BOAT) {
+//                    System.out.println("Hit, but no boats have sunk (yet)");
+//                    break;
+//                }
+//            }
+//            //System.out.println("You have sunken boat of size " + boat.size);
+//            //return;
+//        }
+
     }
 
 
