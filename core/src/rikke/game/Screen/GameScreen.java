@@ -2,7 +2,6 @@ package rikke.game.Screen;
 
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -13,6 +12,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import rikke.game.Battleship;
 import rikke.game.Board.Board;
+import rikke.game.Player.AI;
 import rikke.game.Player.AbstractPlayer;
 import rikke.game.Player.Boat;
 import rikke.game.Util.Tuple2Int;
@@ -27,6 +27,9 @@ public class GameScreen implements Screen {
     private OrthogonalTiledMapRenderer tiledMapRenderer;
     private OrthographicCamera camera;
     private TiledMap map;
+
+    private final int AI_OFFSET = 13;
+    private final int PLAYER_OFFSET = 1;
 
     public GameScreen(Battleship game) {
         this.game = game;
@@ -46,10 +49,10 @@ public class GameScreen implements Screen {
         map = loader.load("battleship_map.tmx");
         float unitScale = 1 / 32f; // Since I have 32x32 tiles
         tiledMapRenderer = new OrthogonalTiledMapRenderer(map, unitScale);
-        addBoats(game.mainGame.ai, 13);
-        addBoats(game.mainGame.player, 1);
-        TiledMapTileLayer fogLayer = (TiledMapTileLayer) map.getLayers().get("fog");
-        fogLayer.setOpacity((float) 0.6);
+        addBoats(game.mainGame.ai, AI_OFFSET);
+        addBoats(game.mainGame.player, PLAYER_OFFSET);
+//        TiledMapTileLayer fogLayer = (TiledMapTileLayer) map.getLayers().get("fog");
+//        fogLayer.setOpacity((float) 0.6);
     }
 
 
@@ -103,21 +106,24 @@ public class GameScreen implements Screen {
             int xScaling = w / 23;
             int yScaling = h / 11;
 
-            int x = -13 + Gdx.input.getX() / xScaling;
+            int x = -AI_OFFSET + Gdx.input.getX() / xScaling;
             int y = (h - Gdx.input.getY()) / yScaling;
 
 
             if (x >= 0 && y < 10) {
                 System.out.println(x + ", " + y);
-                game.mainGame.ai.handleShot(new Tuple2Int(x, y));
+               if (game.mainGame.ai.handleShot(new Tuple2Int(x, y))) {
 
-                Random r = new Random();
-                int rx = r.nextInt(10);
-                int ry = r.nextInt(10);
-                game.mainGame.player.handleShot(new Tuple2Int(rx, ry));
+                   Random r = new Random();
+                   int rx, ry;
+                   do {
+                       rx = r.nextInt(10);
+                       ry = r.nextInt(10);
+                   } while (!game.mainGame.player.handleShot(new Tuple2Int(rx, ry)));
 
-                updateBoard(rx, ry, game.mainGame.player.getBoard(), 1);
-                updateBoard(x, y, game.mainGame.ai.getBoard(), 13);
+                   updateBoard(rx, ry, game.mainGame.player.getBoard(), PLAYER_OFFSET, game.mainGame.player);
+                   updateBoard(x, y, game.mainGame.ai.getBoard(), AI_OFFSET, game.mainGame.ai);
+               }
             }
         }
 
@@ -127,10 +133,19 @@ public class GameScreen implements Screen {
         tiledMapRenderer.render();
 
 
+        if (winCondition()) {
+            game.setScreen(new WinScreen(game));
+        }
+
     }
 
 
-    private void updateBoard(int x, int y, Board board, int xOffset) {
+    private boolean winCondition() {
+        return game.mainGame.ai.getBoats().isEmpty();
+    }
+
+
+    private void updateBoard(int x, int y, Board board, int xOffset, AbstractPlayer abPlayer) {
         TiledMapTileLayer hitMissLayer = (TiledMapTileLayer) map.getLayers().get("hit_or_miss");
         TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
 
@@ -148,8 +163,30 @@ public class GameScreen implements Screen {
         TiledMapTileLayer.Cell fogcell = new TiledMapTileLayer.Cell();
         fogcell.setTile(map.getTileSets().getTile(0));
         fogLayer.setCell(x + xOffset, y, fogcell);
+
+        Boat sunkenBoat = abPlayer.sunkenBoat();
+        if (sunkenBoat != null) {
+            sinkBoat(sunkenBoat, abPlayer);
+        }
     }
 
+
+    private void sinkBoat(Boat sunkenBoat, AbstractPlayer abPlayer) {
+        TiledMapTileLayer fogLayer = (TiledMapTileLayer) map.getLayers().get("fog");
+        TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
+        Tuple2Int[] coords = sunkenBoat.getFields();
+
+        for (Tuple2Int coord : coords) {
+            cell.setTile(map.getTileSets().getTile(13));
+            cell.setRotation(findRotation(sunkenBoat));
+            if (abPlayer instanceof AI) {
+                fogLayer.setCell(coord.x + AI_OFFSET, coord.y, cell);
+            } else {
+                fogLayer.setCell(coord.x + PLAYER_OFFSET, coord.y, cell);
+            }
+        }
+
+    }
 
     @Override
     public void resize(int i, int i1) {

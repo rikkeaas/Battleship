@@ -6,18 +6,19 @@ import rikke.game.Board.PlayerBoard;
 import rikke.game.Util.Direction;
 import rikke.game.Util.Tuple2Int;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
 public abstract class AbstractPlayer implements IPlayer {
 
     protected Board board;
-    protected Boat[] boats;
+    protected ArrayList<Boat> boats;
     protected int[] boatSizes;
 
 
     public AbstractPlayer(int nbOfBoats, int[] boatSizes) {
-        boats = new Boat[nbOfBoats];
+        boats = new ArrayList<Boat>(nbOfBoats);
         this.boatSizes = boatSizes;
     }
 
@@ -46,7 +47,7 @@ public abstract class AbstractPlayer implements IPlayer {
         Boat boat = new Boat(boatSizes[idx], startCoord, dir);
         System.out.println();
         if (isValid(boat)) {
-            boats[idx] = boat;
+            boats.add(boat);
             board.registerBoat(boat.getFields());
             return true;
         }
@@ -81,29 +82,33 @@ public abstract class AbstractPlayer implements IPlayer {
 
     @Override
     public boolean handleShot(Tuple2Int coord) {
-        if (board.registerHit(coord)) {
-            sunkenBoat();
-            return true;
-        } return false;
+        return board.registerHit(coord);
     }
 
-    private void sunkenBoat() {
-        // todo fix!
-//        for (Boat boat : boats) {
-//            for (Tuple2Int coord : boat.getFields()) {
-//                if (board.getField(coord) == Field.BOAT) {
-//                    System.out.println("Hit, but no boats have sunk (yet)");
-//                    break;
-//                }
-//            }
-//            //System.out.println("You have sunken boat of size " + boat.size);
-//            //return;
-//        }
+    public Boat sunkenBoat() {
+        boolean notSunk = false;
+        for (Boat boat : boats) {
+            for (Tuple2Int coord : boat.getFields()) {
+                if (board.getField(coord) == Field.BOAT) {
+                    notSunk = true;
+                    break;
+                }
+            }
+            if (!notSunk) {
+                System.out.println("You have sunken boat of size " + boat.size);
+                boats.remove(boat);
+                return boat;
+            } else {
+                notSunk = false;
+            }
+        }
+        System.out.println("Hit, but no boats have sunk (yet)");
+        return null;
 
     }
 
 
-    public Boat[] getBoats() {
+    public ArrayList<Boat> getBoats() {
         return boats;
     }
 

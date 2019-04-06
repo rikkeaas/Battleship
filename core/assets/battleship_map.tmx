@@ -5,6 +5,7 @@
  <tileset firstgid="7" source="hit.tsx"/>
  <tileset firstgid="8" source="miss.tsx"/>
  <tileset firstgid="9" source="fog_n_stuff.tsx"/>
+ <tileset firstgid="13" source="sunkBoat.tsx"/>
  <layer id="4" name="ocean" width="23" height="11">
   <data encoding="csv">
 2,2,2,2,2,2,2,2,2,2,2,0,2,2,2,2,2,2,2,2,2,2,2,

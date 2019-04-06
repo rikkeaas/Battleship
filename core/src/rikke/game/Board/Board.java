@@ -54,7 +54,7 @@ public abstract class Board {
             return true;
         } else if (getField(coords) == Field.WATER){
             setField(coords, Field.MISS);
-            return false;
+            return true;
         }
         else {
             System.out.println("Already shot here");
