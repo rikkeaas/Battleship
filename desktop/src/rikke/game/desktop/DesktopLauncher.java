@@ -13,15 +13,8 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.title = "Battleship";
+		config.width = 1000;
+		//config.fullscreen = true;
 		new LwjglApplication(new Battleship(), config);
-
-		int nbOfBoats = 5;
-		int[] sizes = new int[]{5,4,3,3,2};
-
-		Player player = new Player(nbOfBoats, sizes);
-		AI ai = new AI(nbOfBoats, sizes);
-
-		System.out.println(player.visualizeBoard());
-		System.out.println(ai.visualizeBoard());
 	}
 }

@@ -6,10 +6,12 @@ import rikke.game.Screen.GameScreen;
 
 public class Battleship extends Game {
 	public SpriteBatch batch;
+	public MainGame mainGame;
 	
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
+		mainGame = new MainGame();
 		setScreen(new GameScreen(this));
 	}
 
