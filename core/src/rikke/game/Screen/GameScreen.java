@@ -2,7 +2,10 @@ package rikke.game.Screen;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -17,19 +20,23 @@ import rikke.game.Player.AbstractPlayer;
 import rikke.game.Player.Boat;
 import rikke.game.Util.Tuple2Int;
 
-import java.util.Random;
 
 public class GameScreen implements Screen {
 
     Battleship game;
-    public Texture img;
-    private float x, y;
     private OrthogonalTiledMapRenderer tiledMapRenderer;
     private OrthographicCamera camera;
     private TiledMap map;
 
     private final int AI_OFFSET = 13;
     private final int PLAYER_OFFSET = 1;
+
+    Sound hit = Gdx.audio.newSound(new FileHandle("hit.wav"));
+    Sound miss = Gdx.audio.newSound(new FileHandle("miss.wav"));
+    Sound win1 = Gdx.audio.newSound(new FileHandle("win1.wav"));
+    Sound win2 = Gdx.audio.newSound(new FileHandle("win2.wav"));
+
+
 
     public GameScreen(Battleship game) {
         this.game = game;
@@ -96,7 +103,23 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float v) {
-        Gdx.gl.glClearColor(1, 0, 0, 1);
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            Gdx.graphics.setWindowedMode(1000, 500);
+        }
+
+
+        if (winCondition(game.mainGame.player)) {
+            game.setScreen(new LooseScreen(game));
+        }
+        if (winCondition(game.mainGame.ai)) {
+            win1.play();
+            win2.play();
+            game.setScreen(new WinScreen(game));
+        }
+
+
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         int w = Gdx.graphics.getWidth();
@@ -110,18 +133,13 @@ public class GameScreen implements Screen {
             int y = (h - Gdx.input.getY()) / yScaling;
 
 
-            if (x >= 0 && y < 10) {
+            if (x >= 0 && x < 10 && y >= 0 && y < 10) {
                 System.out.println(x + ", " + y);
                if (game.mainGame.ai.handleShot(new Tuple2Int(x, y))) {
 
-                   Random r = new Random();
-                   int rx, ry;
-                   do {
-                       rx = r.nextInt(10);
-                       ry = r.nextInt(10);
-                   } while (!game.mainGame.player.handleShot(new Tuple2Int(rx, ry)));
-
-                   updateBoard(rx, ry, game.mainGame.player.getBoard(), PLAYER_OFFSET, game.mainGame.player);
+                   Tuple2Int tup = ((AI) game.mainGame.ai).cleverShot(game.mainGame.player.getBoard());
+                   game.mainGame.player.handleShot(new Tuple2Int(tup.x, tup.y));
+                   updateBoard(tup.x, tup.y, game.mainGame.player.getBoard(), PLAYER_OFFSET, game.mainGame.player);
                    updateBoard(x, y, game.mainGame.ai.getBoard(), AI_OFFSET, game.mainGame.ai);
                }
             }
@@ -129,19 +147,15 @@ public class GameScreen implements Screen {
 
         camera.update();
         tiledMapRenderer.setView(camera);
-
         tiledMapRenderer.render();
 
 
-        if (winCondition()) {
-            game.setScreen(new WinScreen(game));
-        }
 
     }
 
 
-    private boolean winCondition() {
-        return game.mainGame.ai.getBoats().isEmpty();
+    private boolean winCondition(AbstractPlayer player) {
+        return player.getBoats().isEmpty();
     }
 
 
@@ -151,18 +165,19 @@ public class GameScreen implements Screen {
 
         switch (board.getField(x, y)) {
             case HIT:
+                hit.play(); // Play sound
                 cell.setTile(map.getTileSets().getTile(7));
                 break;
             case MISS:
+                miss.play(0.6f); // Play sound
                 cell.setTile(map.getTileSets().getTile(8));
+                TiledMapTileLayer fogLayer = (TiledMapTileLayer) map.getLayers().get("fog");
+                TiledMapTileLayer.Cell fogcell = new TiledMapTileLayer.Cell();
+                fogcell.setTile(map.getTileSets().getTile(0));
+                fogLayer.setCell(x + xOffset, y, fogcell);
                 break;
         }
         hitMissLayer.setCell(x + xOffset, y, cell);
-
-        TiledMapTileLayer fogLayer = (TiledMapTileLayer) map.getLayers().get("fog");
-        TiledMapTileLayer.Cell fogcell = new TiledMapTileLayer.Cell();
-        fogcell.setTile(map.getTileSets().getTile(0));
-        fogLayer.setCell(x + xOffset, y, fogcell);
 
         Boat sunkenBoat = abPlayer.sunkenBoat();
         if (sunkenBoat != null) {

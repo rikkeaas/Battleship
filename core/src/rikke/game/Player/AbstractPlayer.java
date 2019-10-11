@@ -97,6 +97,7 @@ public abstract class AbstractPlayer implements IPlayer {
             if (!notSunk) {
                 System.out.println("You have sunken boat of size " + boat.size);
                 boats.remove(boat);
+                sinkTiles(boat);
                 return boat;
             } else {
                 notSunk = false;
@@ -104,7 +105,13 @@ public abstract class AbstractPlayer implements IPlayer {
         }
         System.out.println("Hit, but no boats have sunk (yet)");
         return null;
+    }
 
+
+    private void sinkTiles(Boat boat) {
+        for (Tuple2Int coord : boat.getFields()) {
+            board.setField(coord, Field.SUNK);
+        }
     }
 
 
